@@ -61,9 +61,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v){
                 try {
-                    commandChannel = new NetworkConnection(new Socket(russelIP, russelPORT));
-                } catch (IOException error) {
-                    Log.i(TAG,"Error :" + error.toString());
+                    commandChannel = new NetworkConnection(russelIP, russelPORT);
+//                    commandChannel = new NetworkConnection(new Socket(russelIP, russelPORT));
+//                } catch (IOException error) {
+//                    Log.i(TAG,"Error :" + error.toString());
+                } finally {
+
                 }
             }
         }

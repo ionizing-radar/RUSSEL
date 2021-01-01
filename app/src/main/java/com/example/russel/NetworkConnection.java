@@ -1,41 +1,40 @@
 package com.example.russel;
 
+import android.location.GnssAntennaInfo;
+import android.util.EventLog;
 import android.util.Log;
 
+import org.json.JSONObject;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.util.EventListener;
+import java.util.Observable;
+import java.util.Observer;
 
 public class NetworkConnection {
 
-    private static final String TAG = MainActivity.class.getName();
+    private static final String TAG = NetworkConnection.class.getName();
 
-    private Socket clientSocket;
-    private PrintWriter write;
-    private BufferedReader read;
+    private InetAddress ip;
+    private int port;
 
-    public NetworkConnection(Socket socket){
-        clientSocket = socket;
-        try {
-            write = new PrintWriter(clientSocket.getOutputStream(), true);
-            read = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        } catch (IOException error) {
-            Log.i(TAG,"Error :" + error.toString());
-        }
+    public NetworkConnection(InetAddress ip, int port) {
+        this.ip = ip;
+        this.port = port;
     }
 
-    public <T> T sendMessage(String message) {
-        try {
-            write.println(message);
-            String response = read.readLine();
-            return (T) response;
-        } catch (IOException error) {
-            Log.i(TAG,"Error :" + error.toString());
-            return null;
-        }
+    public <T> void sendMessage(T message) {
+        TCPsend send = new TCPsend(message, ip, port);
+        send.start();
     }
 
 }
