@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">RUSSEL</string>
-    <string name="connect">Connect!</string>
-    <string name="defaultIP">192.168.0.11</string>>
+    <string name="connect">Connect</string>
+    <string name="defaultIP">192.168.0.11</string>
+
+    <string name="send">Send</string>
+    <string name="command">command</string>
+
 </resources>

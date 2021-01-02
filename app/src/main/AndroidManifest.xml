@@ -12,6 +12,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RUSSEL">
+        <activity
+            android:name=".DriveActivity"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="landscape">
+        </activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
