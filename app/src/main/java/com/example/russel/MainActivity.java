@@ -10,29 +10,34 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
-import java.net.Inet4Address;
-import java.net.InetAddress;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
+    /** default values */
     public static final String CONNECTION_IP = "CONNECTION_IP";
+    public static final int RUSSEL_DEFAULT_PORT = 23500;
 
-    private static NetworkService mNetworkConnection = null;
+    /** there's a socket **/
     private static String mRusselIP = null;
-    private static final int mRusselPORT = 23500;
-
-    NetworkService mService;
+    private NetworkService mService;
     boolean mBound = false;
+
+    /** joystick, I borrowed this from an instructable: https://www.instructables.com/A-Simple-Android-UI-Joystick/ **/
+//    JoystickView joystick;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        JoystickView joystick = new JoystickView(this);
         setContentView(R.layout.activity_main);
-        }
+//        setContentView(joystick);
+    }
 
     @Override
     protected void onStart() {
@@ -41,13 +46,10 @@ public class MainActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this, NetworkService.class);
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
-
-        {
-            if (mService == null) {
-                Log.e(MainActivity.class.getName(), "Network Service is not bound");
-            } else {
-                mService.startSocket(intent.getStringExtra(MainActivity.CONNECTION_IP), mRusselPORT);
-            }
+        if (mService == null) {
+            Log.e(MainActivity.class.getName(), "Network Service is not bound");
+        } else {
+            mService.startSocket(intent.getStringExtra(MainActivity.CONNECTION_IP), RUSSEL_DEFAULT_PORT);
         }
     }
 
@@ -80,7 +82,17 @@ public class MainActivity extends AppCompatActivity {
         EditText defaultIP = findViewById(R.id.defaultIP);
         mRusselIP =  defaultIP.getText().toString();
         if (mBound) {
-            mService.startSocket(mRusselIP, mRusselPORT);
+            mService.startSocket(mRusselIP, RUSSEL_DEFAULT_PORT);
+        }
+    }
+
+    public void sendByte(View v) throws JSONException {
+        if (mBound) {
+            byte b = 1;
+            String s = "ks is test";
+            JSONObject json = new JSONObject();
+            json.put("Test", s);
+            mService.sendString(json.toString());
         }
     }
 
