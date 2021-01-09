@@ -15,7 +15,7 @@ import android.widget.EditText;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements JoystickView.JoystickListener {
 
     /** default values */
     public static final String CONNECTION_IP = "CONNECTION_IP";
@@ -26,6 +26,9 @@ public class MainActivity extends AppCompatActivity {
     private NetworkService mService;
     boolean mBound = false;
 
+    /** there's a joystick **/
+    private JoystickView joystick;
+
     /** joystick, I borrowed this from an instructable: https://www.instructables.com/A-Simple-Android-UI-Joystick/ **/
 //    JoystickView joystick;
 
@@ -34,9 +37,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        JoystickView joystick = new JoystickView(this);
+        joystick = new JoystickView(this);
         setContentView(R.layout.activity_main);
-//        setContentView(joystick);
     }
 
     @Override
@@ -96,4 +98,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onJoystickMoved(float xPercent, float yPercent, int id) {
+//        Log.i(ServiceConnection.class.getName(), "Radius:"+joystick.getRadius()+" Theta: "+joystick.getTheta());
+    }
 }
