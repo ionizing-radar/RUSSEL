@@ -109,13 +109,10 @@ public class NetworkService extends Service {
      */
     public byte[] sendString(String s) {
         Runnable task = () -> {
-            Log.i(NetworkService.class.toString(), "sending a byte");
-
             if (socket == null) {
                 Log.e(NetworkService.class.toString(), "socket not instantiated");
                 return;
             }
-
             if (!socket.isConnected()) {
                 Log.e(NetworkService.class.toString(), "socket not connected, trying again");
                 startSocket(serverIP, serverPort);
@@ -128,11 +125,11 @@ public class NetworkService extends Service {
                     byte b = (byte) inputStream.read();
                     response += Byte.toString(b);
                 }
-                if (response == "" && ECHO_LOGGING==true) {
-                    Log.i(NetworkService.class.toString(), "no response, all done");
-                } else {
-                    Log.i(NetworkService.class.toString(), response.toString());
-                }
+//                if (response == "" && ECHO_LOGGING==true) {
+//                    Log.i(NetworkService.class.toString(), "no response, all done");
+//                } else {
+//                    Log.i(NetworkService.class.toString(), response.toString());
+//                }
 //                if (inputStream.ready()) {
 //                    Log.i(NetworkService.class.toString(), "reading inputStream bytes");
 //                    inputStream.read(response, 0, inputStream.available());

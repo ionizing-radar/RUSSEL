@@ -110,6 +110,9 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
      */
     @Override
     public void onJoystickMoved(float xPercent, float yPercent, int id) {
+
+        Log.i(MainActivity.class.toString(), "x:"+xPercent +" y:"+ yPercent);
+
         // radius is the hypotenuse of X and Y
         float radius = (float) Math.sqrt(Math.pow(xPercent,2)+Math.pow(yPercent,2));
 
@@ -118,12 +121,18 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
         // so theta is arctan(x,-y)
         float theta = (float) (Math.atan2(xPercent,-yPercent));
 
+
+//        Log.i(MainActivity.class.toString(), "radius:"+radius +" \ttheta:"+ theta);
+
         // make
         JSONObject polar = new JSONObject();
         try {
             polar.put("r",radius);
             polar.put("theta", theta);
-            mService.sendString(polar.toString());
+//            Log.i(MainActivity.class.toString(), "polar: "+polar.toString());
+            JSONObject driveCommand = new JSONObject();
+            driveCommand.put("drive", polar);
+            mService.sendString(driveCommand.toString());
 //            Log.i(MainActivity.class.getName(), polar.toString());
         } catch (JSONException e) {
             e.printStackTrace();
