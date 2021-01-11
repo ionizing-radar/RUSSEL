@@ -15,6 +15,9 @@ import android.widget.EditText;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
 public class MainActivity extends AppCompatActivity implements JoystickView.JoystickListener {
 
     /** default values */
@@ -26,11 +29,10 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
     private NetworkService mService;
     boolean mBound = false;
 
-    /** there's a joystick **/
+    /**
+     * joystick, I borrowed this from an instructable: https://www.instructables.com/A-Simple-Android-UI-Joystick/
+     */
     private JoystickView joystick;
-
-    /** joystick, I borrowed this from an instructable: https://www.instructables.com/A-Simple-Android-UI-Joystick/ **/
-//    JoystickView joystick;
 
 
     @Override
@@ -43,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
 
     @Override
     protected void onStart() {
-        Log.i(MainActivity.class.getName(), "starting Drive Activity");
         super.onStart();
 
         Intent intent = new Intent(this, NetworkService.class);
@@ -63,12 +64,78 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
     }
 
     /**
+     * connect to R.U.S.S.E.L
+     * @param v
+     */
+    public void connectButton(View v){
+        EditText defaultIP = findViewById(R.id.defaultIP);
+        mRusselIP =  defaultIP.getText().toString();
+        if (mBound) {
+            mService.startSocket(mRusselIP, RUSSEL_DEFAULT_PORT);
+        }
+    }
+
+    /**
+     * test send, this is just a test and should never be used outside testing
+     * @param v
+     * @throws JSONException
+     */
+    public void sendByte(View v) throws JSONException {
+        if (mBound) {
+//            byte b = 1;
+            String s = "ks is test";
+            JSONObject json = new JSONObject();
+            json.put("Test", s);
+            mService.sendString(json.toString());
+        }
+    }
+
+    /**
+     * Send a JSON to R.U.S.S.E.L.
+     * @param v this view
+     * @param json what RUSSEL needs to know
+     * @throws JSONException
+     */
+    private void sendJSON(View v, JSONObject json) throws JSONException {
+        if (mBound) {
+            mService.sendString(json.toString());
+        }
+    }
+
+    /**
+     * called by the JoystickView whenever it updates, either from moving or from releasing
+     * @param xPercent percentage of L-R movement, on the interval [-1,1]
+     * @param yPercent percentage of Up-Down movement, on the interval [-1,1]
+     * @param id
+     */
+    @Override
+    public void onJoystickMoved(float xPercent, float yPercent, int id) {
+        // radius is the hypotenuse of X and Y
+        float radius = (float) Math.sqrt(Math.pow(xPercent,2)+Math.pow(yPercent,2));
+
+        // theta would be arctan(y/x) but we want to rotate the unit circle by pi/2
+        // so A(x,y) rotates pi/2 anticlockwise to become A'(-y,x)
+        // so theta is arctan(x,-y)
+        float theta = (float) (Math.atan2(xPercent,-yPercent));
+
+        // make
+        JSONObject polar = new JSONObject();
+        try {
+            polar.put("r",radius);
+            polar.put("theta", theta);
+            mService.sendString(polar.toString());
+//            Log.i(MainActivity.class.getName(), polar.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Service Connection binds the Network Service
      **/
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.i(ServiceConnection.class.getName(), "ServiceConnection onServiceConnected");
             NetworkService.LocalBinder binder = (NetworkService.LocalBinder) service;
             mService = binder.getService();
             mBound = true;
@@ -79,27 +146,4 @@ public class MainActivity extends AppCompatActivity implements JoystickView.Joys
             mBound = false;
         }
     };
-
-    public void connectButton(View v){
-        EditText defaultIP = findViewById(R.id.defaultIP);
-        mRusselIP =  defaultIP.getText().toString();
-        if (mBound) {
-            mService.startSocket(mRusselIP, RUSSEL_DEFAULT_PORT);
-        }
-    }
-
-    public void sendByte(View v) throws JSONException {
-        if (mBound) {
-            byte b = 1;
-            String s = "ks is test";
-            JSONObject json = new JSONObject();
-            json.put("Test", s);
-            mService.sendString(json.toString());
-        }
-    }
-
-    @Override
-    public void onJoystickMoved(float xPercent, float yPercent, int id) {
-//        Log.i(ServiceConnection.class.getName(), "Radius:"+joystick.getRadius()+" Theta: "+joystick.getTheta());
-    }
 }

@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
     tools:context=".MainActivity">
 
     <Button
@@ -15,26 +14,27 @@
         android:onClick="connectButton"
         android:text="@string/connect"
         app:layout_constraintBaseline_toBaselineOf="@+id/defaultIP"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/defaultIP" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <EditText
         android:id="@+id/defaultIP"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:autofillHints="@string/defaultIP"
         android:ems="10"
+        android:hint="@string/defaultIP"
         android:inputType="textPersonName"
         android:text="@string/defaultIP"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/buttonConnect"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="16dp"
         android:onClick="sendByte"
         android:text="@string/send"
         app:layout_constraintStart_toStartOf="@+id/buttonConnect"
@@ -43,7 +43,7 @@
     <com.example.russel.JoystickView
         android:id="@+id/joystick"
         android:layout_width="150dp"
-        android:layout_height="wrap_content"
+        android:layout_height="150dp"
         android:layout_weight="1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

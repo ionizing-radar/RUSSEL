@@ -1,37 +1,26 @@
 package com.example.russel;
 
 import android.content.Context;
-import android.content.ServiceConnection;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 
-import androidx.annotation.InterpolatorRes;
-
-//import android.graphics.AvoidXfermode;
-
 /**
  * Created by Daniel on 7/25/2016.
  * https://github.com/efficientisoceles/JoystickView
- * Changes by ionizing-radar:
- * - class properties radius and theta, and getters for both (allow for polar coodinates for driving)
- * - multiple casts to (float)
- * - removed shading visual effects
+ * with some minor changes by ionizing-radar:multiple casts to (float) and removed shading visual effects
  */
 public class JoystickView extends SurfaceView implements SurfaceHolder.Callback, View.OnTouchListener {
     private float centerX;
     private float centerY;
     private float baseRadius;
     private float hatRadius;
-    private float radius;
-    private float theta;
     private JoystickListener joystickCallback;
 
     private void setupDimensions() {
@@ -91,12 +80,10 @@ public class JoystickView extends SurfaceView implements SurfaceHolder.Callback,
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-
     }
 
     public boolean onTouch(View v, MotionEvent e) {
@@ -104,12 +91,6 @@ public class JoystickView extends SurfaceView implements SurfaceHolder.Callback,
             if(e.getAction() != MotionEvent.ACTION_UP) { // MotionEvent.ACTION_UP is called when touch event ends (finger lifted off screen)
                 // find the hypotenuse of the (X,Y) position of the touch event
                 float displacement = (float) Math.sqrt((Math.pow(e.getX() - centerX, 2)) + Math.pow(e.getY() - centerY, 2));
-
-                radius = (float) Math.min(displacement/baseRadius, 1);
-                // subtracting pi/2 might not be needed in landscape ...
-                theta = (float) (Math.atan2(ratioize((e.getY()-centerY)/baseRadius)*-1,ratioize((e.getX()-centerX)/baseRadius))-(Math.PI/2));
-
-                Log.i(JoystickView.class.getName(), "radius: "+radius+"     theta: "+theta);
 
                 if(displacement < baseRadius) { // displacement within constrained distance
                     drawJoystick(e.getX(), e.getY());
@@ -126,15 +107,6 @@ public class JoystickView extends SurfaceView implements SurfaceHolder.Callback,
             joystickCallback.onJoystickMoved(0,0,getId());
         }
         return true;
-    }
-
-    public float getRadius() { return radius; }
-    public float getTheta() { return theta; }
-
-    private float ratioize(float n) {
-        if (n > 1) return 1;
-        if (n < -1) return -1;
-        return n;
     }
 
     public interface JoystickListener {

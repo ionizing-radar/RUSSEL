@@ -43,6 +43,9 @@ import java.util.concurrent.Executors;
 
 public class NetworkService extends Service {
 
+    /** GLOBALS **/
+    public static final boolean ECHO_LOGGING = false;
+
     /** IBinder is needed to be a service **/
     private final IBinder binder = new LocalBinder();
 
@@ -108,6 +111,11 @@ public class NetworkService extends Service {
         Runnable task = () -> {
             Log.i(NetworkService.class.toString(), "sending a byte");
 
+            if (socket == null) {
+                Log.e(NetworkService.class.toString(), "socket not instantiated");
+                return;
+            }
+
             if (!socket.isConnected()) {
                 Log.e(NetworkService.class.toString(), "socket not connected, trying again");
                 startSocket(serverIP, serverPort);
@@ -120,7 +128,7 @@ public class NetworkService extends Service {
                     byte b = (byte) inputStream.read();
                     response += Byte.toString(b);
                 }
-                if (response == "") {
+                if (response == "" && ECHO_LOGGING==true) {
                     Log.i(NetworkService.class.toString(), "no response, all done");
                 } else {
                     Log.i(NetworkService.class.toString(), response.toString());
